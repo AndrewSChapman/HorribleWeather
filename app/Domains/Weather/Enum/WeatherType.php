@@ -13,10 +13,10 @@ class WeatherType extends AbstractEnum
     public const Dust = 'Dust';
     public const Fog = 'Fog';
     public const Haze = 'Haze';
-    public const Mist =	'mist';
+    public const Mist =	'Mist';
     public const Rain = 'Rain';
     public const Sand = 'Sand';
-    public const Smoke =	'Smoke';
+    public const Smoke = 'Smoke';
     public const Snow = 'Snow';
     public const Squall = 'Squalls';
     public const Thunderstorm = 'Thunderstorm';

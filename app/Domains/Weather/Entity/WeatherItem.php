@@ -2,16 +2,19 @@
 
 namespace App\Domains\Weather\Entity;
 
+use App\Core\Interfaces\Serialisable;
 use App\Core\Type\CreatedAt;
 use App\Core\Type\UpdatedAt;
+use App\Domains\Location\Type\LocationName;
 use App\Domains\Weather\Enum\WeatherType;
+use App\Domains\Location\Type\LocationId;
 use App\Domains\Weather\Type\Temperature;
 use App\Domains\Weather\Type\WeatherDescription;
 use App\Domains\Weather\Type\WeatherIcon;
 use App\Domains\Weather\Type\WeatherItemId;
 use App\Domains\Weather\Type\WindSpeed;
 
-class WeatherItem
+class WeatherItem implements Serialisable
 {
     /** @var WeatherItemId */
     private $id;
@@ -21,6 +24,9 @@ class WeatherItem
 
     /** @var UpdatedAt */
     private $updatedAt;
+
+    /** @var LocationId */
+    private $locationId;
 
     /** @var WeatherType */
     private $type;
@@ -37,8 +43,12 @@ class WeatherItem
     /** @var WeatherIcon */
     private $weatherIcon;
 
+    /** @var LocationName|null */
+    private $locationName;
+
     public function __construct(
         WeatherItemId $id,
+        LocationId $locationId,
         WeatherType $type,
         WeatherDescription $description,
         Temperature $temperature,
@@ -48,6 +58,7 @@ class WeatherItem
         UpdatedAt $updatedAt = null
     ) {
         $this->id = $id;
+        $this->locationId = $locationId;
         $this->type = $type;
         $this->description = $description;
         $this->temperature = $temperature;
@@ -67,9 +78,19 @@ class WeatherItem
         }
     }
 
+    public function setLocationName(LocationName $locationName): void
+    {
+        $this->locationName = $locationName;
+    }
+
     public function getId(): WeatherItemId
     {
         return $this->id;
+    }
+
+    public function getLocationId(): LocationId
+    {
+        return $this->locationId;
     }
 
     public function getType(): WeatherType
@@ -105,5 +126,25 @@ class WeatherItem
     public function getUpdatedAt(): UpdatedAt
     {
         return $this->updatedAt;
+    }
+
+    public function getLocationName(): ?LocationName
+    {
+        return $this->locationName;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId()->getUuid()->toString(),
+            'createdAt' => $this->getCreatedAt()->getTimestamp(),
+            'updatedAt' => $this->getUpdatedAt()->getTimestamp(),
+            'type' => (string)$this->getType(),
+            'locationId' => (string)$this->getLocationId(),
+            'locationName' => $this->locationName !== null ? $this->locationName->toString() : '',
+            'description' => $this->getDescription()->toString(),
+            'temperature' => $this->getTemperature()->getValue(),
+            'wind_speed' => $this->getWindSpeed()->getValue(),
+        ];
     }
 }

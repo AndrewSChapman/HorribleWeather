@@ -2,9 +2,13 @@
 
 namespace App\Domains\Weather\Adapter;
 
+use App\Core\Type\CreatedAt;
 use App\Core\Type\Exception\InvalidJsonException;
+use App\Core\Type\Timestamp;
+use App\Core\Type\UpdatedAt;
 use App\Domains\Weather\Entity\WeatherItem;
 use App\Domains\Weather\Enum\WeatherType;
+use App\Domains\Location\Type\LocationId;
 use App\Domains\Weather\Type\Temperature;
 use App\Domains\Weather\Type\WeatherDescription;
 use App\Domains\Weather\Type\WeatherIcon;
@@ -13,7 +17,15 @@ use App\Domains\Weather\Type\WindSpeed;
 
 class OpenWeatherItemAdapter
 {
-    public function jsonToEntity(string $json): WeatherItem
+    /**
+     * Converts an OpenWeather JSON string to a WeatherItem identity
+     * @param LocationId $locationId
+     * @param string $json
+     * @param Timestamp|null $timestamp
+     * @return WeatherItem
+     * @throws \ReflectionException
+     */
+    public function jsonToEntity(LocationId $locationId, string $json, ?Timestamp $timestamp = null): WeatherItem
     {
         if (empty($json)) {
             throw new InvalidJsonException(OpenWeatherItemAdapter::class, 'Json string is empty');
@@ -40,14 +52,19 @@ class OpenWeatherItemAdapter
         $weatherIcon = new WeatherIcon($item->weather[0]->icon);
         $temperature = new Temperature($item->main->temp);
         $windSpeed = new WindSpeed($item->wind->speed);
+        $createdAt = new CreatedAt($timestamp);
+        $updatedAt = new UpdatedAt($timestamp);
 
         $item = new WeatherItem(
             $weatherItemId,
+            $locationId,
             $weatherType,
             $weatherDescription,
             $temperature,
             $windSpeed,
-            $weatherIcon
+            $weatherIcon,
+            $createdAt,
+            $updatedAt
         );
 
         return $item;

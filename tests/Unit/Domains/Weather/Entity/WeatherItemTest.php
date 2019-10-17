@@ -6,6 +6,7 @@ use App\Core\Type\CreatedAt;
 use App\Core\Type\UpdatedAt;
 use App\Domains\Weather\Entity\WeatherItem;
 use App\Domains\Weather\Enum\WeatherType;
+use App\Domains\Location\Type\LocationId;
 use App\Domains\Weather\Type\Temperature;
 use App\Domains\Weather\Type\WeatherDescription;
 use App\Domains\Weather\Type\WeatherIcon;
@@ -18,15 +19,25 @@ class WeatherItemTest extends TestCase
     public function testWeatherItemWillConstructCorrectlyWithoutTimestampsSpecified(): void
     {
         $id = new WeatherItemId('', true);
+        $locationId = new LocationId('', true);
         $weatherType = new WeatherType(WeatherType::Rain);
         $weatherDescription = new WeatherDescription('Light rain');
         $temperature = new Temperature(11.5);
         $windSpeed = new WindSpeed(0.5);
         $weatherIcon = new WeatherIcon('09d');
 
-        $weatherItem = new WeatherItem($id, $weatherType, $weatherDescription, $temperature, $windSpeed, $weatherIcon);
+        $weatherItem = new WeatherItem(
+            $id,
+            $locationId,
+            $weatherType,
+            $weatherDescription,
+            $temperature,
+            $windSpeed,
+            $weatherIcon
+        );
 
         $this->assertEquals($id->getUuid(), $weatherItem->getId()->getUuid());
+        $this->assertEquals($locationId->getUuid(), $weatherItem->getLocationId()->getUuid());
         $this->assertEquals($weatherType, $weatherItem->getType());
         $this->assertEquals('Light rain', $weatherItem->getDescription()->toString());
         $this->assertEquals(11.5, $weatherItem->getTemperature()->getValue());
@@ -40,6 +51,7 @@ class WeatherItemTest extends TestCase
     {
         $id = new WeatherItemId('', true);
         $weatherType = new WeatherType(WeatherType::Rain);
+        $locationId = new LocationId('', true);
         $weatherDescription = new WeatherDescription('Light rain');
         $temperature = new Temperature(11.5);
         $windSpeed = new WindSpeed(0.5);
@@ -49,6 +61,7 @@ class WeatherItemTest extends TestCase
 
         $weatherItem = new WeatherItem(
             $id,
+            $locationId,
             $weatherType,
             $weatherDescription,
             $temperature,

@@ -9,7 +9,7 @@ use App\Core\Type\Exception\ConstraintException;
  *
  * Represents a unix timestamp.
  */
-abstract class Timestamp
+class Timestamp
 {
     /** @var int */
     private $timestamp;
@@ -18,6 +18,8 @@ abstract class Timestamp
     {
         if ((is_null($init)) || (empty($init))) {
             $this->timestamp = time();
+        } else if ($init instanceof Timestamp) {
+            $this->timestamp = $init->getTimestamp();
         } else if (is_numeric($init)) {
             $this->timestamp = $init;
         } else {

@@ -2,21 +2,23 @@
 
 namespace App\Domains\Weather\Service\WeatherFetcher;
 
+use App\Core\Type\Timestamp;
 use App\Domains\Weather\Adapter\OpenWeatherItemAdapter;
 use App\Domains\Weather\Collection\WeatherItemCollection;
-use App\Domains\Weather\Collection\WeatherLocationCollection;
+use App\Domains\Location\Collection\LocationEntityCollection;
 use App\Domains\Weather\Exception\FailedToFetchWeatherException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 
 class OpenWeatherFetcher implements WeatherFetcherInterface
 {
-    public function __construct()
-    {
-        $client = new Client();
-    }
-
-    public function fetchCurrentWeather(WeatherLocationCollection $weatherLocationCollection): WeatherItemCollection
+    /**
+     * Fetches the current weather from the OpenWeather API for the specified locations
+     * and returns the weather in a WeatherItemCollection
+     * @param LocationEntityCollection $weatherLocationCollection
+     * @return WeatherItemCollection
+     * @throws \ReflectionException
+     */
+    public function fetchCurrentWeather(LocationEntityCollection $weatherLocationCollection): WeatherItemCollection
     {
         $client = new Client([
             'base_uri' => 'https://api.openweathermap.org',
@@ -26,9 +28,10 @@ class OpenWeatherFetcher implements WeatherFetcherInterface
         $openWeatherAdapter = new OpenWeatherItemAdapter();
 
         $collection = new WeatherItemCollection();
+        $now = new Timestamp();
 
         foreach ($weatherLocationCollection as $weatherLocation) {
-            $locationName = (string)$weatherLocation;
+            $locationName = $weatherLocation->getLocationName()->toString();
             $locationUri = $this->getWeatherApiUri($locationName);
 
             $result = $client->get($locationUri);
@@ -38,7 +41,7 @@ class OpenWeatherFetcher implements WeatherFetcherInterface
             }
 
             $itemJson = $result->getBody()->getContents();
-            $weatherItem = $openWeatherAdapter->jsonToEntity($itemJson);
+            $weatherItem = $openWeatherAdapter->jsonToEntity($weatherLocation->getId(), $itemJson, $now);
             $collection->add($weatherItem);
         }
 

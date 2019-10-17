@@ -12,6 +12,12 @@
 */
 
 /** @var \Laravel\Lumen\Routing\Router $router */
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
+});
+
+$router->get('/weather', function () use ($router) {
+    $action = $router->app->make(\App\Domains\Weather\Action\GetCurrentWeatherAction::class);
+    return $action->getCurrentWeather();
 });

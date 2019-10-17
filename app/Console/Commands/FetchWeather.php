@@ -1,10 +1,10 @@
 <?php
 namespace App\Console\Commands;
 
+use App\Domains\Location\Service\LocationLister\LocationListerInterface;
 use App\Domains\Weather\Collection\WeatherItemCollection;
-use App\Domains\Weather\Collection\WeatherLocationCollection;
-use App\Domains\Weather\Enum\WeatherLocation;
-use App\Domains\Weather\Service\WeatherFetcher\OpenWeatherFetcher;
+use App\Domains\Weather\Service\WeatherFetcher\WeatherFetcherInterface;
+use App\Domains\Weather\Service\WeatherPersister\WeatherPersisterInterface;
 use Illuminate\Console\Command;
 
 class FetchWeather extends Command
@@ -23,14 +23,25 @@ class FetchWeather extends Command
      */
     protected $description = 'Fetches the current weather from the OpenWeatherMap service and stores the results';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
+    /** @var LocationListerInterface */
+    private $locationLister;
+
+    /** @var WeatherFetcherInterface */
+    private $weatherFetcher;
+
+    /** @var WeatherPersisterInterface */
+    private $weatherPersister;
+
+    public function __construct(
+        LocationListerInterface $locationLister,
+        WeatherFetcherInterface $weatherFetcher,
+        WeatherPersisterInterface $weatherPersister
+    ) {
         parent::__construct();
+
+        $this->locationLister = $locationLister;
+        $this->weatherFetcher = $weatherFetcher;
+        $this->weatherPersister = $weatherPersister;
     }
 
     /**
@@ -38,9 +49,9 @@ class FetchWeather extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
-        $this->loadCurrentWeather();
+        $this->weatherPersister->persistWeatherItems($this->loadCurrentWeather());
     }
 
     private function loadCurrentWeather(): WeatherItemCollection
@@ -48,17 +59,10 @@ class FetchWeather extends Command
         $this->info('Loading weather.');
 
         // Define the locations that we want to load the weather for.
-        $locations = new WeatherLocationCollection();
-        $locations->add(new WeatherLocation(WeatherLocation::Brighton));
-        $locations->add(new WeatherLocation(WeatherLocation::Leeds));
-        //$locations->add(new WeatherLocation(WeatherLocation::London));
-        //$locations->add(new WeatherLocation(WeatherLocation::Manchester));
-        //$locations->add(new WeatherLocation(WeatherLocation::RedRuth));
-        //$locations->add(new WeatherLocation(WeatherLocation::Edinburgh));
+        $locations = $this->locationLister->getList();
 
         // Fetch the weather
-        $service = new OpenWeatherFetcher();
-        $items = $service->fetchCurrentWeather($locations);
+        $items = $this->weatherFetcher->fetchCurrentWeather($locations);
 
         return $items;
     }
