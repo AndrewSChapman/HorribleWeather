@@ -11,13 +11,29 @@ use App\Domains\Weather\Type\WeatherDescription;
 use App\Domains\Weather\Type\WeatherIcon;
 use App\Domains\Weather\Type\WeatherItemId;
 use App\Domains\Weather\Type\WindSpeed;
+use App\Testing\UnitTest;
 use App\Testing\UnitTestDataHelper\Factory\LocationDataFactory;
+use Illuminate\Http\Request;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class UnitTestDataHelper
 {
     /** @var LocationDataFactory */
     private $locationDataFactory;
+
+    /**
+     * @param TestCase $testCase
+     * @return Request|MockObject
+     */
+    public function getMockRequest(TestCase $testCase): Request
+    {
+        $request = $testCase->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $request;
+    }
 
     public function location(): LocationDataFactory
     {

@@ -1,9 +1,11 @@
 <?php
 namespace Tests\Integration\Domains\Weather\Repository;
 
+use App\Domains\Location\Repository\LocationRepository\LocationRepository;
 use App\Domains\Location\Type\LocationId;
+use App\Domains\Location\Type\LocationName;
 use App\Domains\Weather\Repository\WeatherItemRepository;
-use App\Testing\UnitTestDataHelper;
+use App\Testing\UnitTestDataHelper\UnitTestDataHelper;
 use Tests\IntegrationTestCase;
 
 class WeatherItemRepositoryIntegrationTest extends IntegrationTestCase
@@ -11,27 +13,37 @@ class WeatherItemRepositoryIntegrationTest extends IntegrationTestCase
     public function testRepositoryWillSaveWeatherItem(): void
     {
         $helper = new UnitTestDataHelper();
-        $weatherItem = $helper->getWeatherItem();
 
-        $repo = new WeatherItemRepository();
-        $repo->save($weatherItem);
+        $location = $helper->location()->createLocationEntity();
+        $weatherItem = $helper->getWeatherItem($location->getId());
+
+        // We must have a location in order to save a weather item
+        $locationRepo = new LocationRepository();
+        $locationRepo->save($location);
+
+        $weatherRepo = new WeatherItemRepository();
+        $weatherRepo->save($weatherItem);
 
         $this->assertTrue(true);
     }
 
     public function testRepositoryWillGetCurrentWeatherList(): void
     {
-        $locationId1 = new LocationId('', true);
-        $locationId2 = new LocationId('', true);
+        $helper = new UnitTestDataHelper();
+        $location1 = $helper->location()->createLocationEntity(new LocationName('AAA,uk'));
+        $location2 = $helper->location()->createLocationEntity(new LocationName('BBB,uk'));
+        $locationRepo = new LocationRepository();
+        $locationRepo->save($location1);
+        $locationRepo->save($location2);
 
         $repo = new WeatherItemRepository();
 
         // Ensure there's a couple of items in the database
         $helper = new UnitTestDataHelper();
-        $weatherItem = $helper->getWeatherItem($locationId1);
+        $weatherItem = $helper->getWeatherItem($location1->getId());
         $repo->save($weatherItem);
 
-        $weatherItem = $helper->getWeatherItem($locationId2);
+        $weatherItem = $helper->getWeatherItem($location2->getId());
         $repo->save($weatherItem);
 
         // Get a list
@@ -42,11 +54,11 @@ class WeatherItemRepositoryIntegrationTest extends IntegrationTestCase
         $hasLocation2 = false;
 
         foreach ($weatherItems as $weatherItem) {
-            if ($weatherItem->getLocationId()->getUuid() == $locationId1->getUuid()) {
+            if ($weatherItem->getLocationId()->getUuid() == $location1->getId()->getUuid()) {
                 $hasLocation1 = true;
             }
 
-            if ($weatherItem->getLocationId()->getUuid() == $locationId2->getUuid()) {
+            if ($weatherItem->getLocationId()->getUuid() == $location2->getId()->getUuid()) {
                 $hasLocation2 = true;
             }
         }

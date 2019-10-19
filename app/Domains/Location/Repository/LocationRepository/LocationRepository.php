@@ -7,6 +7,7 @@ use App\Domains\Location\Adapter\LocationEntityModelAdapter;
 use App\Domains\Location\Collection\LocationEntityCollection;
 use App\Domains\Location\Entity\LocationEntity;
 use App\Domains\Location\Model\LocationModel;
+use App\Domains\Location\Type\LocationName;
 
 class LocationRepository implements LocationRepositoryInterface
 {
@@ -43,5 +44,14 @@ class LocationRepository implements LocationRepositoryInterface
         }
 
         return $collection;
+    }
+
+    public function existsByName(LocationName $locationName): bool
+    {
+        $modelItems = LocationModel::query()
+            ->where('location', '=', $locationName->toString())
+            ->get();
+
+        return $modelItems->isNotEmpty();
     }
 }

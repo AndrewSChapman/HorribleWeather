@@ -74,4 +74,71 @@ class WeatherItemTest extends TestCase
         $this->assertEquals(1570899600, $weatherItem->getCreatedAt()->getTimestamp());
         $this->assertEquals(1570899905, $weatherItem->getUpdatedAt()->getTimestamp());
     }
+
+    /**
+     * @dataProvider getWeatherItemScoringFactors
+     */
+    public function testWeatherItemScoring(int $temperature, string $weatherType, int $windSpeed, int $expectedScore)
+    {
+        $weatherItem = new WeatherItem(
+            new WeatherItemId('', true),
+            new LocationId('', true),
+            new WeatherType($weatherType),
+            new WeatherDescription('Not relevant'),
+            new Temperature($temperature),
+            new WindSpeed($windSpeed),
+            new WeatherIcon('09d')
+        );
+
+        $this->assertEquals($expectedScore, $weatherItem->getScore()->getValue());
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getWeatherItemScoringFactors(): array
+    {
+       return [
+           [-3, WeatherType::Thunderstorm, 30, 30],
+           [-3, WeatherType::Tornado, 30, 30],
+           [-3, WeatherType::Dust, 30, 30],
+           [-3, WeatherType::Ash, 30, 30],
+           [-3, WeatherType::Sand, 30, 30],
+           [37, WeatherType::Thunderstorm, 30, 30],
+           [-2, WeatherType::Thunderstorm, 30, 25],
+           [31, WeatherType::Thunderstorm, 30, 25],
+           [-2, WeatherType::Thunderstorm, 30, 25],
+           [12, WeatherType::Thunderstorm, 30, 23],
+           [30, WeatherType::Thunderstorm, 30, 23],
+           [14, WeatherType::Thunderstorm, 30, 20],
+           [29, WeatherType::Thunderstorm, 30, 20],
+
+           [-3, WeatherType::Snow, 30, 25],
+           [-3, WeatherType::Rain, 30, 25],
+           [-3, WeatherType::Smoke, 30, 25],
+
+           [-3, WeatherType::Mist, 30, 23],
+           [-3, WeatherType::Clouds, 30, 23],
+           [-3, WeatherType::Drizzle, 30, 23],
+           [-3, WeatherType::Fog, 30, 23],
+           [-3, WeatherType::Haze, 30, 23],
+           [-3, WeatherType::Squall, 30, 23],
+
+           [-3, WeatherType::ClearConditions, 30, 20],
+           [-2, WeatherType::ClearConditions, 30, 15],
+           [31, WeatherType::ClearConditions, 30, 15],
+           [12, WeatherType::ClearConditions, 30, 13],
+           [30, WeatherType::ClearConditions, 30, 13],
+           [14, WeatherType::ClearConditions, 30, 10],
+           [29, WeatherType::ClearConditions, 30, 10],
+
+           [14, WeatherType::ClearConditions, 29, 5],
+           [14, WeatherType::ClearConditions, 20, 5],
+           [14, WeatherType::ClearConditions, 19, 3],
+           [14, WeatherType::ClearConditions, 10, 3],
+           [14, WeatherType::ClearConditions, 9, 0],
+           [14, WeatherType::ClearConditions, 0, 0],
+       ];
+    }
 }

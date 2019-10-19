@@ -2,6 +2,9 @@
 
 namespace App\Core\Data;
 
+/**
+ * Provides the basis for a strongly typed list object.
+ */
 abstract class AbstractCollection implements \Iterator, \Countable
 {
     /** @var array */
@@ -51,7 +54,7 @@ abstract class AbstractCollection implements \Iterator, \Countable
         $items = [];
 
         foreach ($this as $item) {
-            $items[] = (string)$item;
+            $items[] = $item;
         }
 
         return $items;

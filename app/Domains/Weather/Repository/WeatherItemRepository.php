@@ -55,7 +55,7 @@ SQL;
             ->get();
 
         foreach ($modelItems as $modelItem) {
-            $weatherItemCollection->add($this->modelAdapter->modelToEntity($modelItem));
+            $weatherItemCollection->add($this->modelAdapter->modelToEntity($modelItem, true));
         }
 
         return $weatherItemCollection;

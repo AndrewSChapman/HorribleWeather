@@ -15,8 +15,15 @@ class CurrentWeatherLister implements CurrentWeatherListerInterface
         $this->weatherItemRepository = $weatherItemRepository;
     }
 
+    /**
+     * Returns the current weather, sorted by the most deplorable.
+     * The places with the worst weather come first.
+     * @return WeatherItemCollection
+     */
     public function getCurrentWeather(): WeatherItemCollection
     {
-        return $this->weatherItemRepository->getCurrentWeather();
+        $weatherCollection = $this->weatherItemRepository->getCurrentWeather();
+        $weatherCollection->sortByHorribleWeather();
+        return $weatherCollection;
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Domains\Location\Entity;
 
-use App\Core\Interfaces\Serialisable;
+use App\Core\Interfaces\ArraySerialisable;
 use App\Core\Type\CreatedAt;
 use App\Core\Type\UpdatedAt;
+use App\Core\Type\WholeNumber;
 use App\Domains\Location\Type\LocationId;
 use App\Domains\Location\Type\LocationName;
 
-class LocationEntity implements Serialisable
+class LocationEntity implements ArraySerialisable
 {
     /** @var LocationId */
     private $id;

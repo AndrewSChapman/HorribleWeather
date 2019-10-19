@@ -2,7 +2,7 @@
 
 namespace App\Core\Interfaces;
 
-interface Serialisable
+interface ArraySerialisable
 {
     public function toArray(): array;
 }

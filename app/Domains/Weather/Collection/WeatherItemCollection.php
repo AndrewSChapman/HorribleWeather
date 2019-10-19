@@ -21,4 +21,17 @@ class WeatherItemCollection extends AbstractCollection
     {
         return $this->values[$offset];
     }
+
+    public function sortByHorribleWeather(): void
+    {
+        usort($this->values, function(WeatherItem $itemA, WeatherItem $itemB) {
+           if ($itemA->getScore() > $itemB->getScore()) {
+               return -1;
+           } else if ($itemA->getScore() === $itemB->getScore()) {
+               return 0;
+           } else {
+               return 1;
+           }
+        });
+    }
 }

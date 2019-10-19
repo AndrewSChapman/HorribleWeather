@@ -18,7 +18,7 @@ use App\Domains\Weather\Type\WindSpeed;
 
 class WeatherItemModelAdapter
 {
-    public function modelToEntity(WeatherItemModel $model): WeatherItem
+    public function modelToEntity(WeatherItemModel $model, $withLocation = false): WeatherItem
     {
         try {
             $weatherItem = new WeatherItem(
@@ -33,7 +33,10 @@ class WeatherItemModelAdapter
                 new UpdatedAt($model->updated_at)
             );
 
-            $weatherItem->setLocationName(new LocationName($model->location->location));
+            if ($withLocation) {
+                $weatherItem->setLocationName(new LocationName($model->location->location));
+            }
+
             return $weatherItem;
         } catch (\Exception $exception) {
             throw new AdapterException(get_class($this), $exception->getMessage());

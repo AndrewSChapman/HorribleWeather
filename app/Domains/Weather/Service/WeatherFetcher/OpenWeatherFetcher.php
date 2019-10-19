@@ -3,6 +3,7 @@
 namespace App\Domains\Weather\Service\WeatherFetcher;
 
 use App\Core\Type\Timestamp;
+use App\Domains\Location\Exception\InvalidLocationException;
 use App\Domains\Weather\Adapter\OpenWeatherItemAdapter;
 use App\Domains\Weather\Collection\WeatherItemCollection;
 use App\Domains\Location\Collection\LocationEntityCollection;
@@ -31,18 +32,21 @@ class OpenWeatherFetcher implements WeatherFetcherInterface
         $now = new Timestamp();
 
         foreach ($weatherLocationCollection as $weatherLocation) {
-            $locationName = $weatherLocation->getLocationName()->toString();
-            $locationUri = $this->getWeatherApiUri($locationName);
+            $locationUri = $this->getWeatherApiUri($weatherLocation->getLocationName()->toString());
 
-            $result = $client->get($locationUri);
+            try {
+                $result = $client->get($locationUri);
 
-            if ($result->getStatusCode() !== 200) {
-                throw new FailedToFetchWeatherException("Http request failed for location: $locationUri");
+                if ($result->getStatusCode() !== 200) {
+                    throw new FailedToFetchWeatherException("Http request failed for location: $locationUri");
+                }
+
+                $itemJson = $result->getBody()->getContents();
+                $weatherItem = $openWeatherAdapter->jsonToEntity($weatherLocation->getId(), $itemJson, $now);
+                $collection->add($weatherItem);
+            } catch (\Exception $exception) {
+                throw new InvalidLocationException($weatherLocation->getLocationName());
             }
-
-            $itemJson = $result->getBody()->getContents();
-            $weatherItem = $openWeatherAdapter->jsonToEntity($weatherLocation->getId(), $itemJson, $now);
-            $collection->add($weatherItem);
         }
 
         return $collection;

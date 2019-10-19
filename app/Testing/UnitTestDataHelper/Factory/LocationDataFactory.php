@@ -7,8 +7,11 @@ use App\Core\Type\UpdatedAt;
 use App\Domains\Location\Collection\LocationEntityCollection;
 use App\Domains\Location\Entity\LocationEntity;
 use App\Domains\Location\Repository\LocationRepository\LocationRepositoryInterface;
+use App\Domains\Location\Service\LocationChecker\LocationCheckerInterface;
+use App\Domains\Location\Service\LocationPersister\LocationPersisterInterface;
 use App\Domains\Location\Type\LocationId;
 use App\Domains\Location\Type\LocationName;
+use App\Domains\Weather\Service\WeatherFetcher\WeatherFetcherInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +31,42 @@ class LocationDataFactory
             ->getMock();
 
         return $repository;
+    }
+
+    /**
+     * @param TestCase $testCase
+     * @return WeatherFetcherInterface|MockObject
+     */
+    public function getWeatherFetcher(TestCase $testCase): WeatherFetcherInterface
+    {
+        $service = $testCase->getMockBuilder(WeatherFetcherInterface::class)
+            ->getMock();
+
+        return $service;
+    }
+
+    /**
+     * @param TestCase $testCase
+     * @return LocationCheckerInterface|MockObject
+     */
+    public function getLocationChecker(TestCase $testCase): LocationCheckerInterface
+    {
+        $service = $testCase->getMockBuilder(LocationCheckerInterface::class)
+            ->getMock();
+
+        return $service;
+    }
+
+    /**
+     * @param TestCase $testCase
+     * @return LocationPersisterInterface|MockObject
+     */
+    public function getLocationPersister(TestCase $testCase): LocationPersisterInterface
+    {
+        $service = $testCase->getMockBuilder(LocationPersisterInterface::class)
+            ->getMock();
+
+        return $service;
     }
 
     public function createLocationEntity(?LocationName $locationName = null): LocationEntity

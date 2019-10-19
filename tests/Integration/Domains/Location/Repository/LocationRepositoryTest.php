@@ -1,14 +1,14 @@
 <?php
-namespace Tests\Integration\Domains\Weather\Repository;
+namespace Tests\Integration\Domains\Location\Repository;
 
 use App\Domains\Location\Repository\LocationRepository\LocationRepository;
 use App\Domains\Location\Type\LocationName;
-use App\Testing\UnitTestDataHelper;
+use App\Testing\UnitTestDataHelper\UnitTestDataHelper;
 use Tests\IntegrationTestCase;
 
 class LocationRepositoryTest extends IntegrationTestCase
 {
-    public function testRepositoryWillSaveLocationEntity(): void
+    public function testRepositoryWillSaveLocationEntityAndThenFindItByName(): void
     {
         $helper = new UnitTestDataHelper();
         $entity = $helper->location()->createLocationEntity();
@@ -16,7 +16,7 @@ class LocationRepositoryTest extends IntegrationTestCase
         $repo = new LocationRepository();
         $repo->save($entity);
 
-        $this->assertTrue(true);
+        $this->assertTrue($repo->existsByName($entity->getLocationName()));
     }
 
     public function testRepositoryWillGetLocationList(): void
