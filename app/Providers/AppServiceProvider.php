@@ -69,7 +69,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(LocationPersisterInterface::class, function ($app) {
             return new LocationPersister(
                 $this->app->make(LocationRepositoryInterface::class),
-                $this->app->make(LocationCheckerInterface::class));
+                $this->app->make(LocationCheckerInterface::class)
+            );
         });
     }
 }

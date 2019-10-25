@@ -230,7 +230,8 @@ class WeatherItem implements ArraySerialisable
             'locationName' => $this->getLocationName() !== null ? $this->getLocationName()->toString() : '',
             'description' => $this->getDescription()->toString(),
             'temperature' => $this->getTemperature()->getValue(),
-            'wind_speed' => $this->getWindSpeed()->getValue(),
+            'windSpeed' => $this->getWindSpeed()->getValue(),
+            'icon' => $this->getWeatherIcon()->getValue(),
             'score' => $this->getScore()->getValue()
         ];
     }

@@ -6,6 +6,7 @@ use App\Domains\Weather\Entity\WeatherItem;
 use App\Domains\Weather\Enum\WeatherType;
 use App\Domains\Weather\Repository\WeatherItemRepositoryInterface;
 use App\Domains\Location\Type\LocationId;
+use App\Domains\Weather\Service\WeatherPersister\WeatherPersisterInterface;
 use App\Domains\Weather\Type\Temperature;
 use App\Domains\Weather\Type\WeatherDescription;
 use App\Domains\Weather\Type\WeatherIcon;
@@ -88,6 +89,17 @@ class UnitTestDataHelper
     public function getWeatherItemRepository(UnitTest $testCase): WeatherItemRepositoryInterface
     {
         $repository = $testCase->getMockBuilder(WeatherItemRepositoryInterface::class)
+            ->getMock();
+
+        return $repository;
+    }
+
+    /**
+     * @return WeatherPersisterInterface|MockObject
+     */
+    public function getWeatherPersister(UnitTest $testCase): WeatherPersisterInterface
+    {
+        $repository = $testCase->getMockBuilder(WeatherPersisterInterface::class)
             ->getMock();
 
         return $repository;
