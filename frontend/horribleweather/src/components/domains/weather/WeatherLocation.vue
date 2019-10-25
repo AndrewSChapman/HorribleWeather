@@ -1,7 +1,7 @@
 <template>
     <div class="weather-location" :class="{'most-deplorable': mostDeplorable}">
         <div class="location-icon">
-            <img :src="'http://openweathermap.org/img/wn/' + weatherItem.icon + '@2x.png'" />
+            <img :src="'https://openweathermap.org/img/wn/' + weatherItem.icon + '@2x.png'" />
         </div>
         <div class="location-info">
             <h3>{{ weatherItem.locationName }} {{ weatherItem.temperature }} &deg;C</h3>

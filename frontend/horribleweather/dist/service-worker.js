@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.27c0025c59f7780ed08c523221b8da0b.js"
+  "/precache-manifest.c1f78e814d1c6bd31dc406a2250f3bbe.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "horribleweather"});
