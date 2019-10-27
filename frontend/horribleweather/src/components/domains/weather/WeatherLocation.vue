@@ -35,6 +35,7 @@
         margin-bottom: 20px;
         border-radius: 6px;
         display: flex;
+        flex-wrap: wrap;
     }
 
     h3 {
@@ -63,8 +64,6 @@
         width: 30%;
     }
 
-
-
     h3 {
         margin: 0;
         padding: 0;
@@ -73,5 +72,23 @@
     p {
         margin: 0;
         padding: 0;
+    }
+
+    @media only screen and (max-width: 600px) {
+        .location-icon {
+            width: 30%;
+            img {
+                margin-left: -10px;
+            }
+        }
+
+        .location-info {
+            width: 68%;
+        }
+
+        .score {
+            width: 95%;
+            text-align: right;
+        }
     }
 </style>
